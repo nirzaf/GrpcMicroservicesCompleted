@@ -21,7 +21,9 @@ namespace DiscountGrpc.Services
         {
             var discount = DiscountContext.Discounts.FirstOrDefault(d => d.Code == request.DiscountCode);
 
-            _logger.LogInformation("Discount is operated with the {discountCode} code and the amount is : {discountAmount}", discount.Code, discount.Amount);
+            _logger.LogInformation(
+                "Discount is operated with the {discountCode} code and the amount is : {discountAmount}", discount.Code,
+                discount.Amount);
 
             return Task.FromResult(new DiscountModel
             {
@@ -30,6 +32,5 @@ namespace DiscountGrpc.Services
                 Amount = discount.Amount
             });
         }
-
     }
 }

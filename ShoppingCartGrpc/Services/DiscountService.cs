@@ -12,7 +12,8 @@ namespace ShoppingCartGrpc.Services
 
         public DiscountService(DiscountProtoService.DiscountProtoServiceClient discountProtoService)
         {
-            _discountProtoService = discountProtoService ?? throw new ArgumentNullException(nameof(discountProtoService));
+            _discountProtoService =
+                discountProtoService ?? throw new ArgumentNullException(nameof(discountProtoService));
         }
 
         public async Task<DiscountModel> GetDiscount(string discountCode)

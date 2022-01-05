@@ -12,36 +12,36 @@ namespace IdentityServer
         public static IEnumerable<Client> Clients =>
             new Client[]
             {
-                new Client
-                   {
-                        ClientId = "ShoppingCartClient",
-                        AllowedGrantTypes = GrantTypes.ClientCredentials,
-                        ClientSecrets =
-                        {
-                            new Secret("secret".Sha256())
-                        },
-                        AllowedScopes = { "ShoppingCartAPI" }
-                   }
+                new()
+                {
+                    ClientId = "ShoppingCartClient",
+                    AllowedGrantTypes = GrantTypes.ClientCredentials,
+                    ClientSecrets =
+                    {
+                        new Secret("secret".Sha256())
+                    },
+                    AllowedScopes = { "ShoppingCartAPI" }
+                }
             };
 
         public static IEnumerable<ApiScope> ApiScopes =>
-           new ApiScope[]
-           {
-               new ApiScope("ShoppingCartAPI", "Shopping Cart API")
-           };
+            new ApiScope[]
+            {
+                new("ShoppingCartAPI", "Shopping Cart API")
+            };
 
         public static IEnumerable<ApiResource> ApiResources =>
-          new ApiResource[]
-          {
-          };
+            new ApiResource[]
+            {
+            };
 
         public static IEnumerable<IdentityResource> IdentityResources =>
-          new IdentityResource[]
-          {
-          };
+            new IdentityResource[]
+            {
+            };
 
         public static List<TestUser> TestUsers =>
-            new List<TestUser>
+            new()
             {
             };
     }

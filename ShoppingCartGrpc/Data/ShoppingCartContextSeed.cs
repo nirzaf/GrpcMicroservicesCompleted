@@ -13,27 +13,27 @@ namespace ShoppingCartGrpc.Data
             {
                 var shoppingCarts = new List<ShoppingCart>
                 {
-                    new ShoppingCart
+                    new()
                     {
                         UserName = "swn",
                         Items = new List<ShoppingCartItem>
                         {
-                           new ShoppingCartItem
-                           {
-                               Quantity = 2,
-                               Color = "Black",
-                               Price = 699,
-                               ProductId = 1,
-                               ProductName = "Mi10T"
-                           },
-                           new ShoppingCartItem
-                           {
-                               Quantity = 3,
-                               Color = "Red",
-                               Price = 899,
-                               ProductId = 2,
-                               ProductName = "P40"
-                           }
+                            new()
+                            {
+                                Quantity = 2,
+                                Color = "Black",
+                                Price = 699,
+                                ProductId = 1,
+                                ProductName = "Mi10T"
+                            },
+                            new()
+                            {
+                                Quantity = 3,
+                                Color = "Red",
+                                Price = 899,
+                                ProductId = 2,
+                                ProductName = "P40"
+                            }
                         }
                     }
                 };

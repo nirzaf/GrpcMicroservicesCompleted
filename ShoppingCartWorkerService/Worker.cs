@@ -38,10 +38,11 @@ namespace ShoppingCartWorkerService
                 //3 Add sc items into SC with client stream
 
                 //0 Get Token from IS4
-                var token = await GetTokenFromIS4();                
+                var token = await GetTokenFromIS4();
 
                 //1 Create SC if not exist
-                using var scChannel = GrpcChannel.ForAddress(_config.GetValue<string>("WorkerService:ShoppingCartServerUrl"));
+                using var scChannel =
+                    GrpcChannel.ForAddress(_config.GetValue<string>("WorkerService:ShoppingCartServerUrl"));
                 var scClient = new ShoppingCartProtoService.ShoppingCartProtoServiceClient(scChannel);
 
                 var scModel = await GetOrCreateShoppingCartAsync(scClient, token);
@@ -50,7 +51,8 @@ namespace ShoppingCartWorkerService
                 using var scClientStream = scClient.AddItemIntoShoppingCart();
 
                 //2 Retrieve products from product grpc with server stream
-                using var productChannel = GrpcChannel.ForAddress(_config.GetValue<string>("WorkerService:ProductServerUrl"));
+                using var productChannel =
+                    GrpcChannel.ForAddress(_config.GetValue<string>("WorkerService:ProductServerUrl"));
                 var productClient = new ProductProtoService.ProductProtoServiceClient(productChannel);
 
                 _logger.LogInformation("GetAllProducts started..");
@@ -77,10 +79,13 @@ namespace ShoppingCartWorkerService
                     await scClientStream.RequestStream.WriteAsync(addNewScItem);
                     _logger.LogInformation("ShoppingCart Client Stream Added New Item : {addNewScItem}", addNewScItem);
                 }
+
                 await scClientStream.RequestStream.CompleteAsync();
 
-                var addItemIntoShoppingCartResponse = await scClientStream;                
-                _logger.LogInformation("AddItemIntoShoppingCart Client Stream Response: {addItemIntoShoppingCartResponse}", addItemIntoShoppingCartResponse);
+                var addItemIntoShoppingCartResponse = await scClientStream;
+                _logger.LogInformation(
+                    "AddItemIntoShoppingCart Client Stream Response: {addItemIntoShoppingCartResponse}",
+                    addItemIntoShoppingCartResponse);
 
                 await Task.Delay(_config.GetValue<int>("WorkerService:TaskInterval"), stoppingToken);
             }
@@ -92,14 +97,16 @@ namespace ShoppingCartWorkerService
 
             // discover endpoints from metadata
             var client = new HttpClient();
-            var disco = await client.GetDiscoveryDocumentAsync(_config.GetValue<string>("WorkerService:IdentityServerUrl"));
+            var disco = await client.GetDiscoveryDocumentAsync(
+                _config.GetValue<string>("WorkerService:IdentityServerUrl"));
             if (disco.IsError)
             {
                 _logger.LogError(disco.Error);
                 return string.Empty;
             }
 
-            _logger.LogInformation("Discovery endpoint taken from IS4 metadata. Discovery : {disco}", disco.TokenEndpoint);
+            _logger.LogInformation("Discovery endpoint taken from IS4 metadata. Discovery : {disco}",
+                disco.TokenEndpoint);
 
             // request token
             var tokenResponse = await client.RequestClientCredentialsTokenAsync(new ClientCredentialsTokenRequest
@@ -122,7 +129,8 @@ namespace ShoppingCartWorkerService
             return tokenResponse.AccessToken;
         }
 
-        private async Task<ShoppingCartModel> GetOrCreateShoppingCartAsync(ShoppingCartProtoService.ShoppingCartProtoServiceClient scClient, string token)
+        private async Task<ShoppingCartModel> GetOrCreateShoppingCartAsync(
+            ShoppingCartProtoService.ShoppingCartProtoServiceClient scClient, string token)
         {
             ShoppingCartModel shoppingCartModel;
             try
@@ -132,8 +140,10 @@ namespace ShoppingCartWorkerService
                 var headers = new Metadata();
                 headers.Add("Authorization", $"Bearer {token}");
 
-                shoppingCartModel = await scClient.GetShoppingCartAsync(new GetShoppingCartRequest { Username = _config.GetValue<string>("WorkerService:UserName") }, headers);
-                
+                shoppingCartModel = await scClient.GetShoppingCartAsync(
+                    new GetShoppingCartRequest { Username = _config.GetValue<string>("WorkerService:UserName") },
+                    headers);
+
                 _logger.LogInformation("GetShoppingCartAsync Response: {shoppingCartModel}", shoppingCartModel);
             }
             catch (RpcException exception)
@@ -141,7 +151,8 @@ namespace ShoppingCartWorkerService
                 if (exception.StatusCode == StatusCode.NotFound)
                 {
                     _logger.LogInformation("CreateShoppingCartAsync started..");
-                    shoppingCartModel = await scClient.CreateShoppingCartAsync(new ShoppingCartModel { Username = _config.GetValue<string>("WorkerService:UserName") });
+                    shoppingCartModel = await scClient.CreateShoppingCartAsync(new ShoppingCartModel
+                        { Username = _config.GetValue<string>("WorkerService:UserName") });
                     _logger.LogInformation("CreateShoppingCartAsync Response: {shoppingCartModel}", shoppingCartModel);
                 }
                 else

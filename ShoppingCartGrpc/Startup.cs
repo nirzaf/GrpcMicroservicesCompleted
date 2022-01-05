@@ -31,14 +31,11 @@ namespace ShoppingCartGrpc
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<ShoppingCartContext>(options =>
-                   options.UseInMemoryDatabase("ShoppingCart"));
-         
-            services.AddGrpc(opt =>
-            {
-                opt.EnableDetailedErrors = true;
-            });
+                options.UseInMemoryDatabase("ShoppingCart"));
 
-            services.AddAutoMapper(typeof(Startup));            
+            services.AddGrpc(opt => { opt.EnableDetailedErrors = true; });
+
+            services.AddAutoMapper(typeof(Startup));
 
             services.AddGrpcClient<DiscountProtoService.DiscountProtoServiceClient>
                 (o => o.Address = new Uri(Configuration["GrpcConfigs:DiscountUrl"]));
@@ -46,14 +43,14 @@ namespace ShoppingCartGrpc
             services.AddScoped<DiscountService>();
 
             services.AddAuthentication("Bearer")
-             .AddJwtBearer("Bearer", options =>
-             {
-                 options.Authority = "https://localhost:5005";
-                 options.TokenValidationParameters = new TokenValidationParameters
-                 {
-                     ValidateAudience = false
-                 };
-             });
+                .AddJwtBearer("Bearer", options =>
+                {
+                    options.Authority = "https://localhost:5005";
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateAudience = false
+                    };
+                });
 
             services.AddAuthorization();
         }
@@ -61,10 +58,7 @@ namespace ShoppingCartGrpc
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
+            if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
 
             app.UseRouting();
             app.UseAuthentication();
@@ -74,10 +68,12 @@ namespace ShoppingCartGrpc
             {
                 endpoints.MapGrpcService<ShoppingCartService>();
 
-                endpoints.MapGet("/", async context =>
-                {
-                    await context.Response.WriteAsync("Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909");
-                });
+                endpoints.MapGet("/",
+                    async context =>
+                    {
+                        await context.Response.WriteAsync(
+                            "Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909");
+                    });
             });
         }
     }
