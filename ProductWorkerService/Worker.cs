@@ -30,13 +30,13 @@ namespace ProductWorkerService
             while (!stoppingToken.IsCancellationRequested)
             {
                 _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
-                
+
                 try
                 {
                     using var channel = GrpcChannel.ForAddress(_config.GetValue<string>("WorkerService:ServerUrl"));
                     var client = new ProductProtoService.ProductProtoServiceClient(channel);
 
-                    _logger.LogInformation("AddProductAsync started..");                    
+                    _logger.LogInformation("AddProductAsync started..");
                     var addProductResponse = await client.AddProductAsync(await _factory.Generate());
                     _logger.LogInformation("AddProduct Response: {product}", addProductResponse.ToString());
                 }

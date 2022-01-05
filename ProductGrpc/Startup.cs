@@ -21,12 +21,9 @@ namespace ProductGrpc
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<ProductsContext>(options =>
-                    options.UseInMemoryDatabase("Products"));
+                options.UseInMemoryDatabase("Products"));
 
-            services.AddGrpc(opt =>
-            {
-                opt.EnableDetailedErrors = true;
-            });
+            services.AddGrpc(opt => { opt.EnableDetailedErrors = true; });
 
             services.AddAutoMapper(typeof(Startup));
         }
@@ -34,10 +31,7 @@ namespace ProductGrpc
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
+            if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
 
             app.UseRouting();
 
@@ -45,10 +39,12 @@ namespace ProductGrpc
             {
                 endpoints.MapGrpcService<ProductService>();
 
-                endpoints.MapGet("/", async context =>
-                {
-                    await context.Response.WriteAsync("Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909");
-                });
+                endpoints.MapGet("/",
+                    async context =>
+                    {
+                        await context.Response.WriteAsync(
+                            "Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909");
+                    });
             });
         }
     }
